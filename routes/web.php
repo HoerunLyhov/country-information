@@ -14,3 +14,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/',[\App\Http\Controllers\CountryController::class, 'index']);
+Route::get('/{index}',[\App\Http\Controllers\CountryController::class, 'show'])->name('country.show');

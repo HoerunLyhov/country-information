@@ -33,7 +33,7 @@
       </thead>
       <tbody>
         @foreach($countries as $con)
-          <tr>
+          <tr class="btnModal" data-url="{{route('country.show', $loop->index)}}">
             <td><img src="{{$con->flags->png}}" alt="{{isset($con->flags->alt) ?? ''}}" width="100px"></td>
             <td>{{$con->name->official}}</td>
             <td>{{$con->cca2}}</td>
@@ -43,7 +43,7 @@
                 <ul>
                 @foreach($con->name->nativeName as $key => $native)
                   @if(isset($con->languages->$key))
-                    <li>{{$native->official}} (<span>{{$con->languages->$key}}</span>)</li>
+                    <li>{{$native->official}} (<span class="fw-bold">{{$con->languages->$key}}</span>)</li>
                   @else
                     <li>{{$native->official}}</li>
                   @endif
@@ -75,10 +75,136 @@
         @endforeach
       </tbody>
     </table>
+    <div class="modal fade" id="country-modal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="modal-title">
+              <img id="country-img" src="" width="50px">
+              <h5 id="country-title" class="d-inline-block ms-1 mb-0 justify-content-center"></h5>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="Container">
+              <div class="row">
+                <div class="col">
+                  <div class="row">
+                    <div class="col-4 fw-bold">Country Name</div>
+                    <div id="country-name" class="col-6"></div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="row">
+                    <div class="col-4 fw-bold">Official Name</div>
+                    <div id="country-official" class="col-6"></div>
+                  </div>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col">
+                  <div class="row">
+                    <div class="col-4 fw-bold">Region</div>
+                    <div id="country-region" class="col-8"></div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="row">
+                    <div class="col-4 fw-bold">SubRegion</div>
+                    <div id="country-subregion" class="col-8"></div>
+                  </div>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-2 fw-bold">Capital</div>
+                <div id="country-capital" class="col-8"></div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-2 fw-bold">Languages</div>
+                <div id="country-lang" class="col-8"></div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-2 fw-bold">Currencies</div>
+                <div id="country-currency" class="col-8"></div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-2 fw-bold">Population</div>
+                <div id="country-population" class="col-8"></div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-2 fw-bold">Timezone</div>
+                <div id="country-tz" class="col-8"></div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-2 fw-bold">Google Maps</div>
+                <div class="col-8"><a id="country-map" href="" target="_blank">Country Map</a></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
   <script type="application/javascript">
     $(function () {
       $('#table-id').DataTable();
+
+      $(document).on('click','table#table-id tbody tr.btnModal', function() {
+        var url = $(this).data('url');
+        $.get(url, function (data) {
+          if (data != null)
+          {
+            $('img#country-img').attr('src',data.flags.png);
+            $('#country-title').text(data.name.common);
+            $('#country-name').text(data.name.common);
+            $('#country-official').text(data.name.official);
+            $('#country-region').text(data.region);
+            $('#country-subregion').text(data.subregion);
+            var capital = '';
+            data.capital.forEach(function(value, index) {
+              if (index == data.capital.length -1) {
+                capital += value;
+              }
+              else {
+                capital += value + ', ';
+              }
+            });
+            $('#country-capital').text(capital);
+            var lang = '';
+            for (const [index, value] of Object.values(data.languages).entries()) {
+              if (index == Object.keys(data.languages).length - 1) {
+                lang += value;
+              }
+              else {
+                lang += value + ', ';
+              }
+            }
+            $('#country-lang').text(lang);
+            var currency = '';
+            for (const [index, value] of Object.values(data.currencies).entries()) {
+              if (index == Object.keys(data.currencies).length - 1) {
+                currency += value.name + '(' + value.symbol + ')';
+              }
+              else {
+                currency += value.name + '(' + value.symbol + '), ';
+              }
+            }
+            $('#country-currency').text(currency);
+            $('#country-population').text(data.population);
+            $('#country-tz').text(data.timezones);
+            $('#country-map').attr('href', data.maps.googleMaps);
+            $('#country-map').text(data.maps.googleMaps);
+            $('#country-modal').modal('show');
+          }
+        });
+      });
     });
   </script>
 </html>
