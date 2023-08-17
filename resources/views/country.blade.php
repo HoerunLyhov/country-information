@@ -8,9 +8,14 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet"/>
+    <!-- Jquery Table -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css"/>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
+
   </header>
   <body class="antialiased">
-    <table>
+    <table id="table-id">
       <thead>
         <tr>
           <th>Flags</th>
@@ -67,4 +72,9 @@
       </tbody>
     </table>
   </body>
+  <script type="application/javascript">
+    $(function () {
+      $('#table-id').DataTable();
+    });
+  </script>
 </html>
