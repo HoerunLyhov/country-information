@@ -154,7 +154,11 @@
   </body>
   <script type="application/javascript">
     $(function () {
-      $('#table-id').DataTable();
+      $('#table-id').DataTable({
+        scrollX: true,
+        pageLength: 25,
+        paging: true,
+      });
 
       $(document).on('click','table#table-id tbody tr.btnModal', function() {
         var url = $(this).data('url');
